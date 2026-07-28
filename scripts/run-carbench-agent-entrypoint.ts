@@ -1,20 +1,24 @@
+/**
  * CAR-bench Track 2 A2A HTTP agent entrypoint.
 * The competition runner starts the agent as a long-lived A2A service and
  * passes --host, --port, and --card-url. This server keeps one adapter state
  * per A2A context_id, exposes the Agent Card at /.well-known/agent-card.json,
  * and accepts JSON-RPC A2A send-message requests on /.
  */
-
+ 
+ 
 import http, { type IncomingMessage, type ServerResponse } from 'node:http';
 import { generate_next_message, get_init_state, type CarBenchAdapterState, type CarBenchGenerateInput } from '../src/lib/car-bench-agent-adapter';
 
 type JsonObject = Record<string, unknown>;
+
 
 type CliArgs = {
   host: string;
   port: number;
   cardUrl?: string;
 };
+
 
 const states = new Map<string, CarBenchAdapterState>();
 const contextTools = new Map<string, CarBenchGenerateInput['availableTools']>();
@@ -140,6 +144,7 @@ function inferTaskType(text: string): CarBenchGenerateInput['taskType'] {
   if (lower.includes('unavailable') || lower.includes('capability') || lower.includes('hallucinat')) return 'hallucination';
   return 'base';
 }
+
 function buildInput(message: JsonObject, contextId: string): CarBenchGenerateInput {
   const parts = Array.isArray(message.parts) ? message.parts as JsonObject[] : [];
   const text = parts.filter((part) => partKind(part) === 'text').map(partText).filter(Boolean).join('\n');
@@ -239,6 +244,9 @@ async function handleRpc(req: IncomingMessage, res: ServerResponse): Promise<voi
       return;
     }
 
+    const result = await generate_next_message(state, input as CarBenchGenerateInput);
+    state = result.state;
+    process.stdout.write(`${JSON.stringify(result.message)}\n`);
     const state = states.get(contextId) ?? get_init_state();
     const result = await generate_next_message(state, buildInput(message, contextId));
     states.set(contextId, result.state);
@@ -272,9 +280,9 @@ const server = http.createServer((req, res) => {
     sendJson(res, 500, { error: error instanceof Error ? error.message : String(error) });
   });
 });
+
 server.listen(args.port, args.host, () => {
   console.error(`Autex CAR-bench A2A server listening on ${args.host}:${args.port}`);
-});
-
+}); 
 
                                         
