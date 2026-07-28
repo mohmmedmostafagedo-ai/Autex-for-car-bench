@@ -244,14 +244,12 @@ async function handleRpc(req: IncomingMessage, res: ServerResponse): Promise<voi
       return;
     }
 
-    const result = await generate_next_message(state, input as CarBenchGenerateInput);
-    state = result.state;
-    process.stdout.write(`${JSON.stringify(result.message)}\n`);
     const state = states.get(contextId) ?? get_init_state();
     const result = await generate_next_message(state, buildInput(message, contextId));
     states.set(contextId, result.state);
     sendJson(res, 200, { jsonrpc: '2.0', id, result: toA2AMessage(contextId, result.message) });
-  } catch (error) {sendJson(res, 200, {
+  } catch (error) {
+    sendJson(res, 200, {
       jsonrpc: '2.0',
       id,
       error: { code: -32000, message: error instanceof Error ? error.message : String(error) },
@@ -283,6 +281,6 @@ const server = http.createServer((req, res) => {
 
 server.listen(args.port, args.host, () => {
   console.error(`Autex CAR-bench A2A server listening on ${args.host}:${args.port}`);
-}); 
+});
 
                                         
