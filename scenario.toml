@@ -1,5 +1,5 @@
 [evaluator]
-image = "ghcr.io/car-bench/car-bench-evaluator:latest"
+image = "ghcr.io/mohmmedmostafagedo-ai/autex-for-car-bench:latest"
 
 [evaluator.env]
 GEMINI_API_KEY = "${GEMINI_API_KEY:?Set GEMINI_API_KEY}"
@@ -10,7 +10,7 @@ LOGURU_LEVEL = "${LOGURU_LEVEL:-INFO}"
 #   docker buildx build --platform linux/amd64 -t ghcr.io/your-org/autex-carbench-agent:latest .
 #   docker push ghcr.io/your-org/autex-carbench-agent:latest
 #   docker inspect --format='{{index .RepoDigests 0}}' ghcr.io/your-org/autex-carbench-agent:latest
-image = "ghcr.io/eslamabdelmogood/autex-carbench-agent@sha256:12a8afb5b599a206640291470fffef91892d5884477d1603fa985d5a5d1fee6a"
+image = "ghcr.io/mohmmedmostafagedo-ai/autex-for-car-bench@sha256:eb530302528a5b4e359da903651de2951ada29ad87dbf8d664b9ec19ebf1fd6f"
 
 [agent_under_test.env]
 # Provider-agnostic model selection. No model name, provider route, deployment
