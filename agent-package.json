@@ -6,5 +6,8 @@
   "dependencies": {
     "tsx": "^4.19.2",
     "typescript": "^5"
+  },
+  "scripts": {
+    "start": "tsx scripts/run-carbench-agent-entrypoint.ts"
   }
 }
